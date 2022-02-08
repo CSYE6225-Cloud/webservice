@@ -15,7 +15,7 @@ public class WebappApplication {
 
 	@GetMapping("/healthz")
 	public void healthz() {
-		return;
+		return;asdf
 	}
 
 }
