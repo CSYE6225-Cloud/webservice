@@ -42,6 +42,7 @@ HELP.md
 .sts4-cache
 
 application.properties
+*.gz
 
 ### IntelliJ IDEA ###
 .idea
