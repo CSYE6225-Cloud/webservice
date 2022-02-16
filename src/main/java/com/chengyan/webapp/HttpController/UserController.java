@@ -46,12 +46,12 @@ public class UserController {
 
     @PutMapping(value = "/user/self")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    // Map<String, String> allParams
     public void updateUser(Principal principal, @Valid @RequestBody Map<String, String> requestParams) {
         Set<String> set = new HashSet<>();
         set.add("password");
         set.add("last_name");
         set.add("first_name");
+        set.add("username");
         for (String k : requestParams.keySet()) {
             if (!set.contains(k)) {
                 throw new UndesiredParameterException("Undesired Parameter: " + k);
