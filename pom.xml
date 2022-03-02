@@ -11,7 +11,7 @@
 	<groupId>com.chengyan</groupId>
 	<artifactId>webapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>webapp</name>
 	<description>CSYE6225 Cheng Yan</description>
 	<properties>
