@@ -30,7 +30,6 @@ jobs:
         AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
         MYSQL_PWD: ${{ secrets.MYSQL_PWD }}
       run: |
-        chmod -x ./.github/scripts/setup.sh
         ./.github/scripts/setup.sh
       shell: bash
 
