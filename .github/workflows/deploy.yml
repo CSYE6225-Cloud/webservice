@@ -30,7 +30,7 @@ jobs:
         AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
         MYSQL_PWD: ${{ secrets.MYSQL_PWD }}
       run: |
-        ./.github/scripts/config.sh
+        ./.github/scripts/setup.sh
       shell: bash
 
     # Package artifact
