@@ -1,0 +1,13 @@
+aws_access_key = ""
+
+aws_secret_key = ""
+
+aws_region = ""
+
+source_ami = ""
+
+subnet_id = ""
+
+ssh_username = "ec2-user"
+
+mysql_pwd = ""
