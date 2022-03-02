@@ -26,9 +26,9 @@ jobs:
     # Config web service
     - name: Run build script
       env:
-        AWS_ACCESS_KEY: ${{ secret.AWS_ACCESS_KEY }}
-        AWS_SECRET_KEY: ${{ secret.AWS_SECRET_KEY }}
-        MYSQL_PWD: ${{ secret.MYSQL_PWD }}
+        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        MYSQL_PWD: ${{ secrets.MYSQL_PWD }}
       run: |
         ./.github/scripts/config.sh
       shell: bash
