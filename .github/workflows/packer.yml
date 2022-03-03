@@ -1,0 +1,19 @@
+name: packer
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set packer version
+        uses: hashicorp-contrib/setup-packer@v1
+        with:
+          packer-version: 1.7.10
+
+      - name: Packer validation
+        run: packer validate ami.pkr.hcl
