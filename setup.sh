@@ -29,5 +29,5 @@ mysql --connect-expired-password -uroot -e "ALTER USER 'root'@'localhost' IDENTI
 export MYSQL_PWD=$DB_PWD
 mysql -uroot -e "CREATE DATABASE IF NOT EXISTS csye6225;"
 mysql -uroot csye6225 < MySQLDatabase.sql 
-rm mysql80-community-release-el7-5.noarch.rpm
+rm mysql80-community-release-el7-5.noarch.rpm MySQLDatabase.sql
 echo "---------------Finished MySQL----------------"
