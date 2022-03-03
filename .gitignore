@@ -77,4 +77,4 @@ crash.log
 *.box
 
 # ami build result
-packer.manifest.json
+*packer.manifest.json
