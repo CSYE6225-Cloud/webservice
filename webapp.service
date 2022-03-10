@@ -4,7 +4,7 @@ After=syslog.target
 
 [Service]
 User=webapp
-ExecStart=/usr/local/bin/webapp-0.0.1-SNAPSHOT.jar
+ExecStart=/usr/bin/java -jar /usr/local/bin/webapp-0.0.1-SNAPSHOT.jar --spring.config.location=file:///usr/local/etc/application.properties
 SuccessExitStatus=143
 Restart=always
 RestartSec=5
