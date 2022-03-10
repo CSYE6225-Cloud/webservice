@@ -4,6 +4,7 @@ import com.chengyan.webapp.ConfigController.AwsS3Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -27,15 +28,7 @@ public class S3Service {
     }
 
     private void instantiate() {
-        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(
-                awsS3Config.getAccessKeyId(),
-                awsS3Config.getSecretAccessKey()
-        );
-
-        s3 = S3Client.builder()
-                .region(awsS3Config.getRegion())
-                .credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials))
-                .build();
+        s3 = S3Client.builder().region(awsS3Config.getRegion()).build();
     }
 
     public void uploadFile(String key, byte[] bytes, Map<String, String> metadata) {
