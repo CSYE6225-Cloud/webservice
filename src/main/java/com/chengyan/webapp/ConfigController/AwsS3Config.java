@@ -5,8 +5,6 @@ import software.amazon.awssdk.regions.Region;
 
 @ConfigurationProperties(prefix = "aws")
 public class AwsS3Config {
-    private String accessKeyId;
-    private String secretAccessKey;
     private String bucketName;
     private Region region;
 
@@ -24,21 +22,5 @@ public class AwsS3Config {
 
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
-    }
-
-    public String getAccessKeyId() {
-        return accessKeyId;
-    }
-
-    public void setAccessKeyId(String accessKeyId) {
-        this.accessKeyId = accessKeyId;
-    }
-
-    public String getSecretAccessKey() {
-        return secretAccessKey;
-    }
-
-    public void setSecretAccessKey(String secretAccessKey) {
-        this.secretAccessKey = secretAccessKey;
     }
 }
