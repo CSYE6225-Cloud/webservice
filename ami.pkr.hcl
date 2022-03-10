@@ -13,20 +13,9 @@ variable "aws_secret_key" {
   default = ""
 }
 
-variable "source_ami" {
-  type    = string
-  default = ""
-}
-
 variable "ssh_username" {
   type    = string
   default = "ubuntu"
-}
-
-variable "mysql_pwd" {
-  sensitive = true
-  type      = string
-  default   = ""
 }
 
 locals {
@@ -72,16 +61,12 @@ build {
       "target/webapp-0.0.1-SNAPSHOT.jar",
       "setup.sh",
       "webapp.service",
-      "MySQLDatabase.sql"
+      "sql/schema.sql"
     ]
     destination = "${local.home}/"
   }
 
   provisioner "shell" {
-    environment_vars = [
-      "DB_PWD=${var.mysql_pwd}",
-      "MYSQL_PWD=${var.mysql_pwd}"
-    ]
 
     inline = [
       "echo \"---------------------------------Install Dependancies---------------------------------\"",
@@ -89,21 +74,6 @@ build {
       "./setup.sh",
       "rm setup.sh",
       "echo \"---------------------------------Dependancies Installed---------------------------------\"",
-
-      "echo \"---------------------------------Install Webapp---------------------------------\"",
-      "sudo groupadd webapp && sudo useradd -g webapp webapp",
-      "sudo chown webapp:webapp webapp-0.0.1-SNAPSHOT.jar",
-      "sudo chmod 500 webapp-0.0.1-SNAPSHOT.jar",
-      "sudo chmod 755 webapp.service",
-      "sudo chown root:root webapp.service",
-      "sudo mv webapp-0.0.1-SNAPSHOT.jar /usr/local/bin/",
-      "sudo mv webapp.service /etc/systemd/system/",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable webapp",
-      "sudo systemctl start webapp",
-      "sudo systemctl status webapp",
-      "echo \"---------------------------------Install Webapp---------------------------------\"",
-
       "echo \"---------------------------------All Command Finished---------------------------------\""
     ]
   }
