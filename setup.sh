@@ -14,6 +14,12 @@ sudo chmod 755 webapp.service
 sudo chown root:root webapp.service
 sudo mv webapp.service /etc/systemd/system
 
+sudo mkdir /var/log/webapp
+sudo cat << EOF > /etc/rsyslog.d/webapp.conf
+if \$programname == 'webapp' then /var/log/webapp/webapp.log
+& stop
+EOF
+
 sudo groupadd webapp && sudo useradd -g webapp webapp
 sudo chown webapp:webapp webapp-0.0.1-SNAPSHOT.jar
 sudo chmod 500 webapp-0.0.1-SNAPSHOT.jar

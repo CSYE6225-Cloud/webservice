@@ -1,5 +1,7 @@
 # webservice
 
+[![deployment](https://github.com/CSYE6225-Cloud/webservice/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/CSYE6225-Cloud/webservice/actions/workflows/deploy.yml)
+
 ## Prerequisites for building and deploying
 + `java 17`
 + `Maven 3.8.4`
