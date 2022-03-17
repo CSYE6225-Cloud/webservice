@@ -108,10 +108,11 @@ public class UserController {
         if (!filenamePattern.matcher(suffix).find())
             throw new BadRequestException("bad exception");
 
-        String url = s3Service.getProfilePic(user.getId().toString(), suffix);
+        String profilePicPath = s3Service.getProfilePicPath(user.getId().toString());
+        String url = s3Service.getProfilePicUrl(profilePicPath);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("filename", file.getOriginalFilename());
-        metadata.put("url", url);
+        metadata.put("url", s3Service.getProfilePicUrl(profilePicPath));
         metadata.put("contentType", file.getContentType());
         metadata.put("size", Long.toString(file.getSize()));
 
@@ -119,21 +120,19 @@ public class UserController {
         Optional<ProfilePic> existedProfilePic = profilePicRepository.findByUserId(user.getId());
         if (existedProfilePic.isPresent()) {
             ProfilePic existedProfilePicModel = existedProfilePic.get();
-            profilePicRepository.delete(
-                    existedProfilePicModel
-            );
-            s3Service.deleteFile(existedProfilePicModel.getUrl());
+            s3Service.deleteFile(profilePicPath);
+            profilePicRepository.delete(existedProfilePicModel);
         }
 
         ProfilePic profilePicModel = new ProfilePic();
         profilePicModel.setFilename(file.getOriginalFilename());
         profilePicModel.setUserId(user.getId());
-        profilePicModel.setUrl(awsS3Config.getBucketName()+"/"+url);
+        profilePicModel.setUrl(url);
 
         // upload to S3
         try {
             s3Service.uploadFile(
-                    url,
+                    profilePicPath,
                     file.getBytes(),
                     metadata
             );
@@ -148,15 +147,16 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deletePic(Principal principal) {
         String username = principal.getName();
-        System.out.println(username);
         UUID userId = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("user not found"))
                 .getId();
+
         ProfilePic profilePicModel = profilePicRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Profile pic not found")); // TODO: not found exception
-        s3Service.deleteFile(
-                profilePicModel.getUrl().replace(awsS3Config+"/", "")
-        );
+                .orElseThrow(() -> new NotFoundException("Profile pic not found"));
+
+        String profilePicPath = s3Service.getProfilePicPath(userId.toString());
+        s3Service.deleteFile(profilePicPath);
+
         profilePicRepository.delete(profilePicModel);
     }
 }

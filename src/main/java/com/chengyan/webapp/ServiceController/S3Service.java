@@ -3,9 +3,7 @@ package com.chengyan.webapp.ServiceController;
 import com.chengyan.webapp.ConfigController.AwsS3Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.exception.SdkServiceException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -28,14 +26,27 @@ public class S3Service {
     }
 
     private void instantiate() {
-        s3 = S3Client.builder().region(awsS3Config.getRegion()).build();
+        try {
+            s3 = S3Client.builder().region(awsS3Config.getRegion()).build();
+        } catch (SdkServiceException e) {
+            e.printStackTrace();
+        }
     }
 
     public void uploadFile(String key, byte[] bytes, Map<String, String> metadata) {
-        s3.putObject(
-                PutObjectRequest.builder().metadata(metadata).bucket(awsS3Config.getBucketName()).key(key).build(),
-                RequestBody.fromBytes(bytes)
-        );
+        try {
+            s3.putObject(
+                    PutObjectRequest.builder()
+                            .metadata(metadata)
+                            .contentType(metadata.get("contentType"))
+                            .bucket(awsS3Config.getBucketName())
+                            .key(key)
+                            .build(),
+                    RequestBody.fromBytes(bytes)
+            );
+        } catch (SdkServiceException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteFile(String key) {
@@ -44,12 +55,16 @@ public class S3Service {
                     .bucket(awsS3Config.getBucketName())
                     .key(key)
                     .build());
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (SdkServiceException e) {
+            e.printStackTrace();
         }
     }
 
-    public String getProfilePic(String userId, String suffix) {
-        return String.join("/", userId, "profile_pic."+suffix);
+    public String getProfilePicPath(String userId) {
+        return String.join("/", userId, "profile_pic");
+    }
+
+    public String getProfilePicUrl(String profilePicPath) {
+        return String.join("/", awsS3Config.getBucketName(), profilePicPath);
     }
 }
