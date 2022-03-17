@@ -5,7 +5,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for Users
 -- ----------------------------
 -- DROP TABLE IF EXISTS `Users`;
-CREATE TABLE `Users` (
+CREATE TABLE IF NOT EXISTS `Users` (
   `id` binary(16) NOT NULL,
   `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `last_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `Users` (
 -- Table structure for Profile_pics
 -- ----------------------------
 -- DROP TABLE IF EXISTS `Profile_pics`;
-CREATE TABLE `Profile_pics` (
+CREATE TABLE IF NOT EXISTS `Profile_pics` (
   `id` binary(16) NOT NULL,
   `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,

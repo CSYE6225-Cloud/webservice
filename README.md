@@ -52,4 +52,3 @@ Stop instances:
 ``` bash
 aws ec2 stop-instances --instance-ids i-09841420b08f824ac
 ```
-demo
