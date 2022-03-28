@@ -5,6 +5,12 @@ on:
     branches: [main]
     types: [closed]
 
+env:
+  ARTIFACT_NAME: csye6225-webapp-${{ github.sha }}.zip
+  CODEDEPLOY_APPLICATION_NAME: csye6225-webapp
+  CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME: csye6225-webapp-deployment
+  AWS_REGION: us-east-1
+
 jobs:
   deploy:
     if: ${{ github.event.pull_request.merged == true }}
@@ -18,7 +24,7 @@ jobs:
       env:
         AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-        MYSQL_PWD: ${{ secrets.MYSQL_PWD }}
+#        MYSQL_PWD: ${{ secrets.MYSQL_PWD }}
       run: |
         ./.github/scripts/setup.sh
       shell: bash
@@ -49,3 +55,41 @@ jobs:
       with:
         name: ami.packer.manifest.json
         path: ami.packer.manifest.json
+
+    # Zip the artifacts and upload the zip archive to the CodeDeploy's S3 bucket.
+    - name: upload artifacts
+      run: |
+        mkdir codedeploy_artifact
+        chmod +x codedeploy/*.sh
+        zip -r ${{ env.ARTIFACT_NAME }} target/webapp-0.0.1-SNAPSHOT.jar appspec.yml codedeploy/*.sh
+        mv ${{ env.ARTIFACT_NAME }} codedeploy_artifact/
+        cd codedeploy_artifact
+        ls -al
+
+    - name: Configure AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.GH_ACTION_AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.GH_ACTION_AWS_SECRET_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: GhCodeDeployServiceRole
+
+    - name: copy articat to s3
+      run: |
+        aws s3 sync ./codedeploy_artifact s3://${{ secret.S3_BUCKET_NAME }}
+
+    - name: Code Deploy API call
+      run: |
+        output = $(aws deploy create-deployment \
+           --application-name ${{ env.CODEDEPLOY_APPLICATION_NAME }} \
+           --deployment-config-name CodeDeployDefault.AllAtOnce \
+           --deployment-group-name ${{ env.CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME }} \
+           --s3-location bucket=aws-codedeploy-${{ env.AWS_REGION }},bundleType=zip,key=${{ env.ARTIFACT_NAME }}
+           --output json
+        )
+        echo $output
+
+        dId=$(echo $output | jq -r '.deploymentId')
+        echo $dId
+
+        aws deploy wait deployment-successful --deployment-id $dId
