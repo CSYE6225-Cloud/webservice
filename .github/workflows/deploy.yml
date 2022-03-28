@@ -76,7 +76,7 @@ jobs:
 
     - name: copy articat to s3
       run: |
-        aws s3 sync ./codedeploy_artifact s3://${{ secret.S3_BUCKET_NAME }}
+        aws s3 sync ./codedeploy_artifact s3://${{ secrets.S3_BUCKET_NAME }}
 
     - name: Code Deploy API call
       run: |
@@ -84,7 +84,7 @@ jobs:
            --application-name ${{ env.CODEDEPLOY_APPLICATION_NAME }} \
            --deployment-config-name CodeDeployDefault.AllAtOnce \
            --deployment-group-name ${{ env.CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME }} \
-           --s3-location bucket=${{ secret.S3_BUCKET_NAME }},bundleType=zip,key=${{ env.ARTIFACT_NAME }}
+           --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=${{ env.ARTIFACT_NAME }}
            --output json
         )
         echo $output
