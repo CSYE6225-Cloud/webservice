@@ -84,7 +84,7 @@ jobs:
            --application-name ${{ env.CODEDEPLOY_APPLICATION_NAME }} \
            --deployment-config-name CodeDeployDefault.AllAtOnce \
            --deployment-group-name ${{ env.CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME }} \
-           --s3-location bucket=aws-codedeploy-${{ env.AWS_REGION }},bundleType=zip,key=${{ env.ARTIFACT_NAME }}
+           --s3-location bucket=${{ secret.S3_BUCKET_NAME }},bundleType=zip,key=${{ env.ARTIFACT_NAME }}
            --output json
         )
         echo $output
