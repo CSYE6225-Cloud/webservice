@@ -44,11 +44,11 @@ jobs:
       with:
         packer-version: 1.7.10
 
-#    - name: Packer build
-#      env:
-#        PACKER_LOG: 1
-#      run: |
-#        packer build --var-file=ami.pkrvars.hcl ami.pkr.hcl
+    - name: Packer build
+      env:
+        PACKER_LOG: 1
+      run: |
+        packer build --var-file=ami.pkrvars.hcl ami.pkr.hcl
 
     # Zip the artifacts and upload the zip archive to the CodeDeploy's S3 bucket.
     - name: upload artifacts
