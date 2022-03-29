@@ -18,9 +18,4 @@ public class WebappApplication {
 		return;
 	}
 
-	@GetMapping("/health")
-	public void health() {
-		return;
-	}
-
 }
