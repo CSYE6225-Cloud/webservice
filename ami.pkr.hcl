@@ -58,7 +58,6 @@ build {
 
   provisioner "file" {
     sources = [
-      "target/webapp-0.0.1-SNAPSHOT.jar",
       "setup.sh",
       "webapp.service",
       "sql/schema.sql"

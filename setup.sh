@@ -20,6 +20,7 @@ echo "----------------Config----------------"
 sudo chmod 755 webapp.service
 sudo chown root:root webapp.service
 sudo mv webapp.service /etc/systemd/system
+sudo systemctl daemon-reload
 
 sudo mkdir /var/log/webapp
 sudo cat << EOF > /etc/rsyslog.d/webapp.conf
@@ -28,9 +29,6 @@ if \$programname == 'webapp' then /var/log/webapp/webapp.log
 EOF
 
 sudo groupadd webapp && sudo useradd -g webapp webapp
-sudo chown webapp:webapp webapp-0.0.1-SNAPSHOT.jar
-sudo chmod 500 webapp-0.0.1-SNAPSHOT.jar
-sudo mv webapp-0.0.1-SNAPSHOT.jar /usr/local/bin/
 
 sudo chmod 500 schema.sql
 sudo chown webapp:webapp schema.sql
