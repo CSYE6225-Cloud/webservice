@@ -27,11 +27,6 @@ sudo mv webapp.service /etc/systemd/system
 sudo systemctl daemon-reload
 
 sudo mkdir /var/log/webapp
-sudo cat << EOF > /etc/rsyslog.d/webapp.conf
-if \$programname == 'webapp' then /var/log/webapp/webapp.log
-& stop
-EOF
-
 sudo tee /etc/rsyslog.d/webapp.conf > /dev/null << 'EOF'
 if $programname == 'webapp' then /var/log/webapp/webapp.log
 & stop
