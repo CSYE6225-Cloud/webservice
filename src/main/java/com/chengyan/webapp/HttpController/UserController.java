@@ -7,6 +7,7 @@ import com.chengyan.webapp.ModelController.ProfilePicRepository;
 import com.chengyan.webapp.ModelController.User;
 import com.chengyan.webapp.ModelController.UserRepository;
 import com.chengyan.webapp.ServiceController.S3Service;
+import com.chengyan.webapp.ServiceController.StatsD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,10 +36,14 @@ public class UserController {
     private S3Service s3Service;
 
     @Autowired
+    private StatsD statsd;
+
+    @Autowired
     private AwsS3Config awsS3Config;
 
     @PostMapping(value = "/user")
     public User addUser(@Valid @RequestBody User user) {
+        statsd.getStatsd().incrementCounter("/user.http.post");
         if (userRepository.existsByUsername(user.getUsername()))
             throw new UserExistedException(user.getUsername());
 
@@ -51,6 +56,7 @@ public class UserController {
 
     @GetMapping(value = "/user/self")
     public User getUser(Principal principal) {
+        statsd.getStatsd().incrementCounter("/user/self.http.get");
         String username = principal.getName();
         System.out.println(username);
         return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
@@ -59,6 +65,7 @@ public class UserController {
     @PutMapping(value = "/user/self")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void updateUser(Principal principal, @Valid @RequestBody Map<String, String> requestParams) {
+        statsd.getStatsd().incrementCounter("/user/self.http.put");
         Set<String> set = new HashSet<>();
         set.add("password");
         set.add("last_name");
@@ -88,6 +95,7 @@ public class UserController {
 
     @GetMapping(value = "/user/self/pic")
     public ProfilePic getPic(Principal principal) {
+        statsd.getStatsd().incrementCounter("/user/self/pic.http.get");
         String username = principal.getName();
         UUID userId = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("user not found"))
@@ -99,6 +107,7 @@ public class UserController {
     @PostMapping(value = "/user/self/pic")
     @ResponseStatus(HttpStatus.CREATED)
     public ProfilePic postPic(Principal principal, @RequestParam("profilePic") MultipartFile file) {
+        statsd.getStatsd().incrementCounter("/user/self/pic.http.post");
         String username = principal.getName();
         User user = userRepository.findByUsername(username).orElseThrow();
 
@@ -146,6 +155,7 @@ public class UserController {
     @DeleteMapping(value = "/user/self/pic")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     public void deletePic(Principal principal) {
+        statsd.getStatsd().incrementCounter("/user/self/pic.http.delete");
         String username = principal.getName();
         UUID userId = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("user not found"))
