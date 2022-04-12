@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v2")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
