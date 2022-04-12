@@ -25,9 +25,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/v1/user/self").authenticated()
-                .antMatchers(HttpMethod.PUT, "/v1/user/self").authenticated()
-                .antMatchers("/v1/user/self/pic").authenticated()
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/v2/user/self").authenticated()
+                .antMatchers(HttpMethod.PUT, "/v2/user/self").authenticated()
+                .antMatchers("/v2/user/self/pic").authenticated()
                 .and().csrf().disable().httpBasic()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
