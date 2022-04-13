@@ -69,9 +69,6 @@ public class UserController {
         snsMessageMap.put("message_type", "email");
         snsService.publishMessageToSns(snsMessageMap);
 
-        // add item to email tracker dynamodb
-        dynamoDbService.putItemEmailTracker(user.getUsername());
-
         return userRepository.save(user);
     }
 
