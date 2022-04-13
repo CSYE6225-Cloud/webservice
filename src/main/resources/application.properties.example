@@ -20,4 +20,8 @@ server.port=8080
 
 # AWS
 aws.region=
-aws.bucketName=
+aws.aws.bucket-name=
+aws.dynamodb-table-name=
+aws.topic-arn=
+aws.dynamodb-expired-time=
+aws.dynamodb-email-tracker-table-name=

@@ -60,6 +60,13 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime account_updated;
 
+    @Column(name = "verified", nullable = false)
+    private int verified = 0;
+
+    @Column(name = "verified_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime verifiedAt = null;
+
     public User() {
     }
 
@@ -132,6 +139,26 @@ public class User {
 
     public void setAccount_updated(LocalDateTime account_updated) {
         this.account_updated = account_updated;
+    }
+
+    public int getVerified() {
+        return verified;
+    }
+
+    public void setVerified(int verified) {
+        this.verified = verified;
+    }
+
+    public LocalDateTime getVerifiedAt() {
+        return verifiedAt;
+    }
+
+    public void setVerifiedAt(LocalDateTime verified_at) {
+        this.verifiedAt = verified_at;
+    }
+
+    public boolean isVerified() {
+        return 1 == getVerified();
     }
 
     @Override
