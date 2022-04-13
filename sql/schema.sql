@@ -4,7 +4,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for Users
 -- ----------------------------
--- DROP TABLE IF EXISTS `Users`;
+DROP TABLE IF EXISTS `Users`;
 CREATE TABLE IF NOT EXISTS `Users` (
   `id` binary(16) NOT NULL,
   `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `account_created` datetime(6) NOT NULL,
   `account_updated` datetime(6) NOT NULL,
+  `verified` smallint unsigned NOT NULL DEFAULT '0',
+  `verified_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

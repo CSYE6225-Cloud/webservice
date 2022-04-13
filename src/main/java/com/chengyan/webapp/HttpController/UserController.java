@@ -1,12 +1,13 @@
 package com.chengyan.webapp.HttpController;
 
-import com.chengyan.webapp.ConfigController.AwsS3Config;
 import com.chengyan.webapp.ExceptionController.*;
 import com.chengyan.webapp.ModelController.ProfilePic;
 import com.chengyan.webapp.ModelController.ProfilePicRepository;
 import com.chengyan.webapp.ModelController.User;
 import com.chengyan.webapp.ModelController.UserRepository;
+import com.chengyan.webapp.ServiceController.DynamoDbService;
 import com.chengyan.webapp.ServiceController.S3Service;
+import com.chengyan.webapp.ServiceController.SNSService;
 import com.chengyan.webapp.ServiceController.StatsD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 
 @RestController
-@RequestMapping("/v2")
+@RequestMapping("/v1")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
@@ -39,7 +41,10 @@ public class UserController {
     private StatsD statsd;
 
     @Autowired
-    private AwsS3Config awsS3Config;
+    private DynamoDbService dynamoDbService;
+
+    @Autowired
+    private SNSService snsService;
 
     @PostMapping(value = "/user")
     public User addUser(@Valid @RequestBody User user) {
@@ -47,11 +52,46 @@ public class UserController {
         if (userRepository.existsByUsername(user.getUsername()))
             throw new UserExistedException(user.getUsername());
 
-        System.out.println(user);
         // encode password
         user.setPassword(passwordEncoder.encode(user.obtainPasswordBeforeEncoded()));
 
+        // generate random verify token
+        UUID token = UUID.randomUUID();
+
+        // add item to dynamoDB
+        dynamoDbService.putItem(user.getUsername(), token.toString());
+
+        // publish message to sns, sns will trigger lambda function to send verification email
+        Map<String, String> snsMessageMap = new HashMap<>();
+        snsMessageMap.put("email", user.getUsername());
+        snsMessageMap.put("token", token.toString());
+        snsMessageMap.put("first_name", user.getFirstName());
+        snsMessageMap.put("message_type", "email");
+        snsService.publishMessageToSns(snsMessageMap);
+
+        // add item to email tracker dynamodb
+        dynamoDbService.putItemEmailTracker(user.getUsername());
+
         return userRepository.save(user);
+    }
+
+    @GetMapping(value = "/verifyUserEmail")
+    public void verifyUserByEmail(@RequestParam String email, @RequestParam String token) {
+        statsd.getStatsd().incrementCounter("/verifyUserEmail.http.get");
+        User user = userRepository.findByUsername(email).orElseThrow(() -> new UserNotFoundException(email));
+        if (user.isVerified()) {
+            return;
+        }
+
+        if (dynamoDbService.verifyToken(email, token)) {
+            User userData = userRepository.findByUsername(email).get();
+            userData.setVerified(1);
+            LocalDateTime localDateTime = LocalDateTime.now();
+            userData.setVerifiedAt(localDateTime);
+            userRepository.save(userData);
+        } else {
+            throw new BadRequestException("Bad Verification Token");
+        }
     }
 
     @GetMapping(value = "/user/self")

@@ -10,7 +10,7 @@ StandardError=syslog
 SyslogIdentifier=webapp
 SuccessExitStatus=143
 Restart=always
-RestartSec=5
+RestartSec=15
 
 [Install]
 WantedBy=multi-user.target
