@@ -112,23 +112,4 @@ public class DynamoDbService {
         }
     }
 
-    public PutItemResponse putItemEmailTracker(String email) {
-        Map<String, AttributeValue> itemMap = new HashMap<>();
-        itemMap.put("email", AttributeValue.builder().s(email).build());
-
-        PutItemRequest request = PutItemRequest.builder()
-                .item(itemMap)
-                .tableName(awsS3Config.getDynamodbEmailTrackerTableName())
-                .build();
-
-        PutItemResponse response = null;
-        try {
-            response = client.putItem(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return response;
-    }
-
 }
