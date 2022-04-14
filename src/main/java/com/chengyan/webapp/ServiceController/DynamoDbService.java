@@ -59,7 +59,7 @@ public class DynamoDbService {
         }
     }
 
-    public boolean verifyToken(String email, String token) {
+    public boolean verifyToken(String email, String token, String curTime) {
         Map<String, AttributeValue> keyToGet = new HashMap<>();
         keyToGet.put("email", AttributeValue.builder().s(email).build());
         GetItemRequest request = GetItemRequest.builder()
@@ -69,8 +69,10 @@ public class DynamoDbService {
         boolean res = false;
         try {
             Map<String, AttributeValue> itemMap = client.getItem(request).item();
-            if (itemMap!=null && itemMap.get("token").s().equals(token)) {
-                res = true;
+            if (itemMap!=null) {
+                if (itemMap.get("expire_at").n().compareTo(String.valueOf(curTime)) <=0
+                        && itemMap.get("token").s().equals(token))
+                    res = true;
             }
         } catch (DynamoDbException e) {
             e.printStackTrace();

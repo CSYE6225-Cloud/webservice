@@ -75,12 +75,12 @@ public class UserController {
     @GetMapping(value = "/verifyUserEmail")
     public void verifyUserByEmail(@RequestParam String email, @RequestParam String token) {
         statsd.getStatsd().incrementCounter("/verifyUserEmail.http.get");
+        String curTime = String.valueOf(System.currentTimeMillis() / 1000L);
         User user = userRepository.findByUsername(email).orElseThrow(() -> new UserNotFoundException(email));
         if (user.isVerified()) {
             return;
         }
-
-        if (dynamoDbService.verifyToken(email, token)) {
+        if (dynamoDbService.verifyToken(email, token, curTime)) {
             User userData = userRepository.findByUsername(email).get();
             userData.setVerified(1);
             LocalDateTime localDateTime = LocalDateTime.now();
