@@ -39,12 +39,10 @@ public class DynamoDbService {
         itemMap.put("email", AttributeValue.builder().s(email).build());
         itemMap.put("token", AttributeValue.builder().s(token).build());
 
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
         int expiredTime = awsS3Config.getDynamodbExpiredTime() == null
                 ? ITEM_EXPIRED_MINUTES
                 :  Integer.parseInt(awsS3Config.getDynamodbExpiredTime());
-        String expire_at = String.valueOf(
-                TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime()) + (60L * expiredTime));
+        String expire_at = String.valueOf(System.currentTimeMillis() / 1000L) + (60L * expiredTime);
         System.out.println(expire_at);
         itemMap.put("expire_at", AttributeValue.builder().n(expire_at).build());
 
