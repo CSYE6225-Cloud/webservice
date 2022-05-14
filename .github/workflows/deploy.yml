@@ -1,9 +1,10 @@
 name: deployment
 
 on:
-  pull_request:
-    branches: [main]
-    types: [closed]
+  workflow_dispatch
+#  pull_request:
+#    branches: [main]
+#    types: [closed]
 
 env:
   ARTIFACT_NAME: csye6225-webapp-${{ github.sha }}.zip
@@ -13,7 +14,7 @@ env:
 
 jobs:
   build-AMI:
-    if: ${{ github.event.pull_request.merged == true }}
+#    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
