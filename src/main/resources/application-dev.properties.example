@@ -1,0 +1,2 @@
+server.port=8080
+logging.config=src/main/resources/log4j2-dev.xml
